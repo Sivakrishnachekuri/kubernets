@@ -28,35 +28,28 @@ Kubernetes cluster
 
 2 salve nodes
 
-
-
-
-
-
-=============================================================================================================================
-KK FUNDA  Ph: 863980177/9676831734
-==============================================================================================================================
-
+----------------------------------------------------------------------------------------------
 Agenda: Kubernetes Setup Using Kubeadm In AWS EC2 Ubuntu Servers Container-D As Runtime
-=======
+------------------------------------------------------------------------------------------------
 
 Prerequisite:
 =============
 
 3 - Ubuntu Serves
 
-1 - master  (4GB RAM , 2 Core) t2.medium
+   1 - master  (4GB RAM , 2 Core) t2.medium
 
-2 - Workers  (1 GB, 1 Core)     t2.micro
+   2 - Workers  (1 GB, 1 Core)     t2.micro
 
 
 Note: Open Required Ports In AWS Security Groups. For now we will open All trafic.
+
 
 ==========COMMON FOR MASTER & SLAVES START ====
 
 1) Switch to root user
    
-sudo su -
+   sudo su -
 
 
 2) Disable swap & add kernel settings
@@ -70,13 +63,13 @@ sed -i '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab
 
 3) Add  kernel settings & Enable IP tables(CNI Prerequisites)-Communication b/w POD to POD
 
-https://kubernetes.io/docs/setup/production-environment/container-runtimes/
-============================================================================
+      Refrence link :https://kubernetes.io/docs/setup/production-environment/container-runtimes/
+   
 
-cat <<EOF | sudo tee /etc/modules-load.d/k8s.conf
-overlay
-br_netfilter
-EOF
+   cat <<EOF | sudo tee /etc/modules-load.d/k8s.conf
+   overlay
+   br_netfilter
+   EOF
 
 
 modprobe overlay
@@ -93,16 +86,15 @@ EOF
 
 sysctl --system
 
-4) Install containerd run time
+4) Install containerd run time :
+------------------------------------------
 
-https://kubernetes.io/docs/setup/production-environment/container-runtimes/#containerd
-=======================================================================================
+   Refrence link : https://kubernetes.io/docs/setup/production-environment/container-runtimes/#containerd
 
-https://github.com/containerd/containerd/blob/main/docs/getting-started.md
-==========================================================================
+   Refrence link : https://github.com/containerd/containerd/blob/main/docs/getting-started.md
 
-https://docs.docker.com/engine/install/ubuntu/
-==============================================
+   Refrence link : https://docs.docker.com/engine/install/ubuntu/
+
 
 #To install containerd, first install its dependencies.
 
@@ -115,72 +107,93 @@ Note: We are not installing Docker Here.Since containerd.io package is part of d
 
 
 # Add Docker’s official GPG key:
+-------------------------------------
+
 mkdir -p /etc/apt/keyrings
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
 
+
 #Use follwing command to set up the repository:
+
 
 echo \
   "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
   $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
   
   
+
+
 # Install containerd
+--------------------------------------
 
 apt-get update -y
 apt-get install containerd.io -y
 
-# Generate default configuration file for containerd
+ Generate default configuration file for containerd
+-----------------------------------------------------------
 
 Note: Containerd uses a configuration file located in /etc/containerd/config.toml for specifying daemon level options.
 The default configuration can be generated via below command.
 
-containerd config default > /etc/containerd/config.toml
 
-# Run following command to update configure cgroup as systemd for contianerd.
+    containerd config default > /etc/containerd/config.toml
+
+
+Run following command to update configure cgroup as systemd for contianerd.
+----------------------------------------------------------------------------------
 
 sed -i 's/SystemdCgroup \= false/SystemdCgroup \= true/g' /etc/containerd/config.toml
 
-# Restart and enable containerd service
+
+# Restart and enable containerd service :
+----------------------------------------------------
 
 systemctl restart containerd
 systemctl enable containerd
 
 
-5) Installing kubeadm, kubelet and kubectl 
+5) Installing kubeadm, kubelet and kubectl :
+------------------------------------------------------------------------
 
 # Update the apt package index and install packages needed to use the Kubernetes apt repository:
 
-https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/install-kubeadm/#check-required-ports
-===========================================================================================================
+
+Refrence link : https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/install-kubeadm/#check-required-ports
+
 
 apt-get update
 apt-get install -y apt-transport-https ca-certificates curl
 
+
+
 # Download the Google Cloud public signing key:
-
-
+-----------------------------------------------------------------------
 
 curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.31/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
 
+
+
 # Add the Kubernetes apt repository:
-
-
+------------------------------------------------------
 
 echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.31/deb/ /' | sudo tee /etc/apt/sources.list.d/kubernetes.list
 
 
 
 # Update apt package index, install kubelet, kubeadm and kubectl, and pin their version:
-
+-----------------------------------------------------------------------------------------------------------
 apt-get update
 apt-get install -y kubelet kubeadm kubectl
 
+
 # apt-mark hold will prevent the package from being automatically upgraded or removed.
-apt-mark hold kubelet kubeadm kubectl
+----------------------------------------------------------------------------------------------
+
+   apt-mark hold kubelet kubeadm kubectl
 
 
-# Enable and start kubelet service
+# Enable and start kubelet service :
+--------------------------------------------------------------------------
 
 systemctl daemon-reload 
 systemctl start kubelet 
@@ -200,24 +213,35 @@ https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/create-clu
 
 # Steps Only For Kubernetes Master
 
-# Switch to the root user.
+# Switch to the root user:
+---------------------------------------------------------
 
-sudo su -
+         sudo su -
 
 # Initialize Kubernates master by executing below commond.
+------------------------------------------------------------------------
 
-kubeadm init
+      kubeadm init
 
+============================================================================================================================
 # If you want to initialize kubernetes on Public EndPoint(Not recommended in real time). You can use below option Replace PUBLIC_IP with actual public ip of your kubernetes master node (Recommended to use Elastic(Create and assign elastic IP to master node and use that Elastic IP below)).Replace PORT with 6443 (API Server Port). 
 
 #kubeadm init --control-plane-endpoint "PUBLIC_IP:PORT"
 
 IF Error
 #sudo kubeadm init --cri-socket /run/containerd/containerd.sock
+=============================================================================================================================
 
 
-# Configure kubectl  exit as root user & exeucte as normal ubuntu user
-exit
+
+# Configure kubectl  exit as root user & exeucte as normal ubuntu user: 
+---------------------------------------------------------------------------
+         
+   exit
+
+
+# set kube/config file:
+---------------------------------------------
 
 mkdir -p $HOME/.kube
 sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
@@ -225,10 +249,12 @@ sudo chown $(id -u):$(id -g) $HOME/.kube/config
 
 
 # To verify, if kubectl is working or not, run the following command.
+------------------------------------------------------------------------------------
 
-kubectl get nodes
+   kubectl get nodes
 
-kubectl get pods -o wide -n kube-system
+   kubectl get pods -o wide -n kube-system
+
 
 #You will notice from the previous command, that all the pods are running except one: ‘core-dns’. For resolving this we will install a # pod network addon like Calico or Weavenet ..etc. 
 
@@ -244,24 +270,33 @@ To install Weave net run the following command.
 https://www.weave.works/docs/net/latest/kubernetes/kube-addon/
 ================================================================
 
-kubectl apply -f https://github.com/weaveworks/weave/releases/download/v2.8.1/weave-daemonset-k8s.yaml
 
-Or To install the calico network addon, run the following command:
+   kubectl apply -f https://github.com/weaveworks/weave/releases/download/v2.8.1/weave-daemonset-k8s.yaml
 
-#kubectl apply -f https://docs.projectcalico.org/manifests/calico.yaml 
+         { Or To install the calico network addon, run the following command:}
 
-
-kubectl get nodes
-
-kubectl get pods 
-kubectl get pods --all-namespaces
+   kubectl apply -f https://docs.projectcalico.org/manifests/calico.yaml 
 
 
-# Get token
+   kubectl get nodes
 
-kubeadm token create --print-join-command
+   kubectl get pods 
+
+   kubectl get pods --all-namespaces
+
+
+
+# Get token :
+----------------------------
+
+
+   kubeadm token create --print-join-command
+
+
+
 
 =========In Master Node End====================
+
 
 
 Add Worker Machines to Kubernates Master
@@ -269,28 +304,34 @@ Add Worker Machines to Kubernates Master
 
 Copy kubeadm join token from and execute in Worker Nodes to join to cluster
 
-
-
 kubectl commonds has to be executed in master machine.
 
-Check Nodes 
+
+Check Nodes :
 =============
 
-kubectl get nodes
+   kubectl get nodes
 
 
-
-Deploy Sample Application
+Deploy Sample Application :
 ==========================
 
-kubectl run nginx-demo --image=nginx --port=80 
+   kubectl run nginx-demo --image=nginx --port=80 --namespace=prod 
 
-kubectl expose pod nginx-demo --port=80 --target-port=80 --type=NodePort --namespace=prod
+>>> before run the above commands , we have to namespace prod
 
 
-Get Node Port details 
-=====================
-kubectl get services
+To acess : 
+--------------------------
+
+   kubectl expose pod nginx-demo --port=80 --target-port=80 --type=NodePort --namespace=prod
+
+
+Get Node Port details :
+-------------------------------------------
+
+
+   kubectl get services
 
 
 ===================================================================================================
@@ -308,15 +349,12 @@ StatefulSet
 
 namespace
 
-
-
 ConfigMap
 Secret
 
 Service
 NetworkPolicies
 Ingress
-
 
 PersistentVolumeClaim
 PersistentVolume
@@ -327,23 +365,24 @@ PersistentVolume
 what is cluster?
 ================
 
-It is group of k8s servers/nodes.
+   It is group of k8s servers/nodes.
 
 what is node?
 =============
+>> A Node is a physical or virtual machine in a Kubernetes cluster that runs application workloads in the form of pods.
 
 
 How to list all k8s resources?
 ==============================
-
-kubectl api-resources
-
+   kubectl api-resources
 
 
+How to create namespace :
+=========================
 
 kubectl create namespace <NN>
 
-kubectl create ns testing-ns
+ ex: kubectl create ns testing-ns
 
 
 
@@ -366,16 +405,16 @@ metadata:
   labels:
     name: my-namespace
 
+
+To create namespace using command for the above yaml file :
+---------------------------------------
+
 kubectl apply -f namespace.yaml
 
 
 --> Alternatively, you can create a namespace directly from the command line:
 
-kubectl create namespace my-namespace
-
-
-
-
+          kubectl create namespace my-namespace
 
 
 
@@ -383,7 +422,7 @@ kubectl create namespace my-namespace
 2. Listing Namespaces
 ---------------------
 
-kubectl get namespaces  or kubectl get ns
+   kubectl get namespaces  { or} kubectl get ns
 
 
 3. Viewing Namespace Details
@@ -395,20 +434,12 @@ kubectl describe ns my-namespace
 
 
 
-
-
-
-
 4. Deleting a Namespace
 -----------------------
 
 To delete a namespace (along with all the resources within it):
 
 kubectl delete namespace my-namespace
-
-
-
-
 
 
 
