@@ -1,0 +1,58 @@
+# Kubernetes Resource Requests and Limits
+
+## 📘 Definitions
+
+### Request
+A **request** is the amount of CPU or memory **guaranteed** to a container. The Kubernetes scheduler uses this value to decide **which node** to place a pod on. If a container tries to use more than its request, it **may still be allowed**, as long as the node has spare capacity.
+
+- Acts as a **minimum** resource guarantee.
+- If not enough resources are available on a node, the pod will not be scheduled there.
+
+### Limit
+A **limit** is the **maximum** amount of CPU or memory a container is allowed to use. If it exceeds this, Kubernetes may **throttle** (CPU) or **kill** the container (memory).
+
+- Acts as a **cap** or upper bound.
+- Enforced by the kubelet at runtime.
+
+---
+
+## 💡 Use Cases
+
+| Scenario | Use Case |
+|----------|----------|
+| Ensure fair sharing of resources | Set requests so that the scheduler knows the minimum resources required for pods. |
+| Prevent a container from consuming too many resources | Set limits to avoid resource hogging. |
+| Improve cluster stability | Helps avoid OOMKills or CPU starvation by enforcing boundaries. |
+| Billing and chargeback | Useful in multi-tenant environments to track usage. |
+
+---
+
+## 🧾 Simple Example: YAML
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx-pod
+spec:
+  containers:
+    - name: nginx
+      image: nginx:1.25
+      resources:
+        requests:
+          memory: "64Mi"
+          cpu: "250m"
+        limits:
+          memory: "128Mi"
+          cpu: "500m"
+
+
+✅ Best Practices
+
+Always set both requests and limits.
+
+Use monitoring to find the right values (e.g., Prometheus, Grafana).
+
+Avoid setting limits without requests (can lead to scheduling problems).
+
+Avoid equal requests and limits for bursty workloads—allow headroom if needed.
