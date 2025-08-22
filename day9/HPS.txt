@@ -12,6 +12,7 @@ pod scaling in Kubernetes :
 
 Vertical scaling in Kubernetes means increasing or decreasing the CPU and memory resources assigned to a single pod, instead of adding or removing pods. It makes a pod more powerful by giving it more resources.
 
+
 Horizontal Pod Autoscaler :
 ---------------------------------------------------
 
@@ -23,24 +24,43 @@ Horizontal Pod Autoscaler :
 
 --> increase/dec the pods manually is called a manual scaling[replicas 2 to 3, 3 to 4]
 
-    HorizontalPodAutoscaler --> k8s object
+    
 
 
 
   IQ :  what is the diff b/w pod auto scaling and aws auto scaling? 
 
-    | Feature             | **Horizontal Scaling**                        | **Vertical Scaling**                                  |
-| ------------------- | --------------------------------------------- | ----------------------------------------------------- |
-| **What it does**    | Adds or removes **pod replicas**              | Increases or decreases **CPU/memory of a single pod** |
-| **Use case**        | Handle **more traffic** by spreading the load | Make a pod handle **heavier tasks** on its own        |
-| **Pod count**       | Changes (more or fewer pods)                  | Stays the same (only 1 pod, just stronger)            |
-| **Scaling method**  | Replication (e.g. `replicas: 3`)              | Resource adjustment (e.g. `cpu: 500m → 1000m`)        |
-| **Example**         | Going from 2 to 5 pods                        | Giving 1 pod more RAM or CPU                          |
-| **Restart needed?** | Not usually                                   | Often restarts the pod                                |
-| **Autoscaler used** | **Horizontal Pod Autoscaler (HPA)**           | **Vertical Pod Autoscaler (VPA)**                     |
 
+   Difference Between Horizontal and Vertical Scaling in Kubernetes
+=================================================================
 
+1. Horizontal Scaling:
+----------------------
+- Adds or removes multiple pod replicas.
+- Used to handle more traffic by distributing load across pods.
+- Changes the number of pods.
+- Example: Scaling from 2 pods to 5 pods.
+- Does not usually require pod restarts.
+- Uses Horizontal Pod Autoscaler (HPA).
 
+2. Vertical Scaling:
+--------------------
+- Increases or decreases CPU and memory for a single pod.
+- Used to make one pod handle heavier workloads.
+- Pod count remains the same, only resources change.
+- Example: Increasing CPU from 500m to 1000m.
+- Usually requires pod restart to apply changes.
+- Uses Vertical Pod Autoscaler (VPA).
+
+Summary:
+--------
+| Feature               | Horizontal Scaling                  | Vertical Scaling                      |
+|----------------------|--------------------------------------|----------------------------------------|
+| Scaling Method        | Adds/removes pods                   | Adjusts resources of a pod             |
+| Pod Count             | Changes                             | Stays the same                         |
+| Load Handling         | Spreads across pods                 | Handled by a stronger pod              |
+| Restart Required?     | No                                  | Yes (usually)                          |
+| Tool Used             | Horizontal Pod Autoscaler (HPA)     | Vertical Pod Autoscaler (VPA)          |
 
 
 
