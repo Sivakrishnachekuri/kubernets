@@ -1,11 +1,50 @@
-pod scaling in Kubernetes
-=========================
+pod scaling in Kubernetes :
+============================
+
+---->. two types of scalling
+
+        1. vertical scalling
+        2. horizontal scalling
+
+
+1 . Vertical scaling
+------------------------------------
+
+Vertical scaling in Kubernetes means increasing or decreasing the CPU and memory resources assigned to a single pod, instead of adding or removing pods. It makes a pod more powerful by giving it more resources.
+
+Horizontal Pod Autoscaler :
+---------------------------------------------------
+
+    Horizontal Pod Autoscaler --> k8s object
+
+ >> Horizontal scaling means increasing or decreasing the number of pod replicas to handle changes in application load.
+
+
 
 --> increase/dec the pods manually is called a manual scaling[replicas 2 to 3, 3 to 4]
 
     HorizontalPodAutoscaler --> k8s object
 
-    what is the diff b/w pod auto scaling and aws auto scaling?
+
+
+  IQ :  what is the diff b/w pod auto scaling and aws auto scaling? 
+
+    | Feature             | **Horizontal Scaling**                        | **Vertical Scaling**                                  |
+| ------------------- | --------------------------------------------- | ----------------------------------------------------- |
+| **What it does**    | Adds or removes **pod replicas**              | Increases or decreases **CPU/memory of a single pod** |
+| **Use case**        | Handle **more traffic** by spreading the load | Make a pod handle **heavier tasks** on its own        |
+| **Pod count**       | Changes (more or fewer pods)                  | Stays the same (only 1 pod, just stronger)            |
+| **Scaling method**  | Replication (e.g. `replicas: 3`)              | Resource adjustment (e.g. `cpu: 500m → 1000m`)        |
+| **Example**         | Going from 2 to 5 pods                        | Giving 1 pod more RAM or CPU                          |
+| **Restart needed?** | Not usually                                   | Often restarts the pod                                |
+| **Autoscaler used** | **Horizontal Pod Autoscaler (HPA)**           | **Vertical Pod Autoscaler (VPA)**                     |
+
+
+
+
+
+
+
 
 
     --> two types of scalings?
