@@ -1,6 +1,13 @@
 pod scaling in Kubernetes :
 ============================
 
+
+Scalling :
+--------------------------------
+
+        increase/dec the pods manually is called a manual scaling[replicas 2 to 3, 3 to 4]
+
+
 ---->. two types of scalling
 
         1. vertical scalling
@@ -65,6 +72,10 @@ Summary:
 
 
 
+
+
+lab for practice :
+------------------------------
 
 
     --> two types of scalings?
