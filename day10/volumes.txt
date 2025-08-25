@@ -117,9 +117,9 @@ apiVersion: apps/v1
 kind: ReplicaSet
 metadata: 
   name: mongodb
-  namespace: dev
+  namespace: testing
 spec:
-  replicas: 1
+  replicas: 2
   selector: 
     matchLabels:
       app: mongodb
@@ -150,7 +150,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: mongosvc
-  namespace: dev
+  namespace: testing
 spec:
   type: ClusterIP
   selector:
@@ -230,7 +230,7 @@ apiVersion: apps/v1
 kind: ReplicaSet
 metadata:
   name: mongodb
-  namespace: prod
+  namespace: testing
 spec:
   selector:
     matchLabels:
@@ -257,7 +257,7 @@ spec:
       volumes:
       - name: mongonfsvol
         nfs:
-         server: 172.31.11.218
+         server: 172.31.81.4
          path: /mnt/nfs_share
 
 ---
@@ -265,7 +265,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: mongosvc
-  namespace: prod
+  namespace: testing
 spec:
   type: ClusterIP
   selector:
