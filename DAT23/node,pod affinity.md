@@ -4,7 +4,7 @@
 ---
 
 ## 1. Node Selector (Basic Node Selection)
-
+ 
 ### Concept:
 Node Selector is the simplest way to schedule Pods on specific Nodes by using Node Labels.
 
